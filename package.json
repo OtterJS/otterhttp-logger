@@ -34,9 +34,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsx tests/index.test.ts",
-    "test:coverage": "c8 tsx --test tests/index.test.ts",
-    "test:report": "c8 report --reporter=text-lcov > lcov.info",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage --silent",
+    "test:dev": "vitest",
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "prepare": "husky"
@@ -47,10 +47,10 @@
     "@commitlint/config-conventional": "^18.1.0",
     "@tinyhttp/app": "^2.2.0",
     "@types/node": "^20.8.9",
-    "c8": "^8.0.1",
-    "expect": "^29.7.0",
+    "@vitest/coverage-istanbul": "^2.0.5",
     "husky": "^9.1.5",
     "supertest-fetch": "^1.5.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^2.0.5"
   }
 }

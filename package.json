@@ -33,13 +33,14 @@
     "http-status-emojis": "^2.2.0"
   },
   "scripts": {
-    "build": "tsc",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage --silent",
-    "test:dev": "vitest",
+    "build": "tsup",
     "check": "biome check .",
     "check:fix": "biome check --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepack": "pnpm build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage --silent",
+    "test:dev": "vitest"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
@@ -50,6 +51,7 @@
     "@vitest/coverage-istanbul": "^2.0.5",
     "husky": "^9.1.5",
     "supertest-fetch": "^1.5.0",
+    "tsup": "^8.2.4",
     "typescript": "^5.2.2",
     "vitest": "^2.0.5"
   }

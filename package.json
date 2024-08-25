@@ -40,7 +40,8 @@
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage --silent",
-    "test:dev": "vitest"
+    "test:dev": "vitest",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",

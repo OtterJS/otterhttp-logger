@@ -23,18 +23,10 @@
       "types": "./dist/filelogger.d.ts"
     }
   },
-  "keywords": [
-    "tinyhttp",
-    "node.js",
-    "web framework",
-    "web",
-    "backend"
-  ],
+  "keywords": ["tinyhttp", "node.js", "web framework", "web", "backend"],
   "author": "v1rtl",
   "license": "MIT",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "dependencies": {
     "colorette": "^2.0.20",
     "dayjs": "^1.11.10",

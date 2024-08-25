@@ -47,7 +47,7 @@
     "@biomejs/biome": "^1.8.3",
     "@commitlint/cli": "^18.2.0",
     "@commitlint/config-conventional": "^18.1.0",
-    "@tinyhttp/app": "^2.2.0",
+    "@otterhttp/app": "^3.4.0",
     "@types/node": "^20.8.9",
     "@vitest/coverage-istanbul": "^2.0.5",
     "husky": "^9.1.5",

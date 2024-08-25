@@ -1,6 +1,6 @@
 import { promises, readFileSync } from "node:fs"
 import { rm } from "node:fs/promises"
-import { App } from "@tinyhttp/app"
+import { App } from "@otterhttp/app"
 import { bold, cyan, magenta, red } from "colorette"
 import { makeFetch } from "supertest-fetch"
 import { assert, describe, expect, it } from "vitest"

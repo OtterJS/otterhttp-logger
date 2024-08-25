@@ -2,7 +2,7 @@ import { METHODS, type IncomingMessage as Request, type ServerResponse as Respon
 import { bold, cyan, magenta, red } from "colorette"
 import dayjs from "dayjs"
 
-import { FileLogger } from "./filelogger.js"
+import { FileLogger } from "./filelogger"
 import { httpStatusEmoji } from "./http-status-emoji"
 
 export enum LogLevel {

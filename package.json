@@ -1,6 +1,5 @@
 {
   "name": "@otterhttp/logger",
-  "version": "1.0.0",
   "type": "module",
   "description": "Flexible HTTP logging middleware for otterhttp",
   "homepage": "https://github.com/OtterJS/otterhttp-logger#readme",

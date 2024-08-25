@@ -1,15 +1,15 @@
-import { promises, readFileSync } from "node:fs"
-import { rm } from "node:fs/promises"
+import { access, readFile, rm } from "node:fs/promises"
 import { App } from "@otterhttp/app"
 import { bold, cyan, magenta, red } from "colorette"
-import { makeFetch } from "supertest-fetch"
-import { assert, describe, expect, it } from "vitest"
+import { describe, expect, it, onTestFinished } from "vitest"
+
+import { makeFetch } from "./make-fetch"
 
 import { LogLevel, logger } from "@/index"
 
 async function checkFileExists(file: string) {
   try {
-    await promises.access(file)
+    await access(file)
     return true
   } catch {
     return false
@@ -17,7 +17,7 @@ async function checkFileExists(file: string) {
 }
 
 describe("Logger tests", () => {
-  it("should use the timestamp format specified in the `format` property", () => {
+  it("should use the timestamp format specified in the `format` property", async () => {
     const originalConsoleLog = console.log
 
     console.log = (log: string) => {
@@ -29,14 +29,12 @@ describe("Logger tests", () => {
     app.use(logger({ timestamp: { format: "mm:ss" } }))
 
     const server = app.listen()
+    onTestFinished(() => void server.close())
 
-    makeFetch(server)("/")
-      .expect(404)
-      .then(() => {
-        server.close()
-      })
+    const response = await makeFetch(server)("/")
+    expect(response.status).toBe(404)
   })
-  it("should enable timestamp if `timestamp` propery is true", () => {
+  it("should enable timestamp if `timestamp` property is true", async () => {
     const originalConsoleLog = console.log
 
     console.log = (log: string) => {
@@ -48,14 +46,12 @@ describe("Logger tests", () => {
     app.use(logger({ timestamp: true }))
 
     const server = app.listen()
+    onTestFinished(() => void server.close())
 
-    makeFetch(server)("/")
-      .expect(404)
-      .then(() => {
-        server.close()
-      })
+    const response = await makeFetch(server)("/")
+    expect(response.status).toBe(404)
   })
-  it("should check for levels when supplied", () => {
+  it("should check for levels when supplied", async () => {
     const level = LogLevel.log
     const originalConsoleLog = console.log
 
@@ -73,15 +69,13 @@ describe("Logger tests", () => {
     )
 
     const server = app.listen()
+    onTestFinished(() => void server.close())
 
-    makeFetch(server)("/")
-      .expect(404)
-      .then(() => {
-        server.close()
-      })
+    const response = await makeFetch(server)("/")
+    expect(response.status).toBe(404)
   })
 
-  it("should call a custom output function", () => {
+  it("should call a custom output function", async () => {
     const customOutput = (log: string) => {
       expect(log).toMatch("GET 404 Not Found /")
     }
@@ -90,12 +84,10 @@ describe("Logger tests", () => {
     app.use(logger({ output: { callback: customOutput, color: false } }))
 
     const server = app.listen()
+    onTestFinished(() => void server.close())
 
-    makeFetch(server)("/")
-      .expect(404)
-      .then(() => {
-        server.close()
-      })
+    const response = await makeFetch(server)("/")
+    expect(response.status).toBe(404)
   })
   describe("Log file tests", () => {
     it("should check if log file and directory is created", async () => {
@@ -113,15 +105,12 @@ describe("Logger tests", () => {
         }),
       )
       const server = app.listen()
-      await makeFetch(server)("/")
-        .expect(404)
-        .then(async () => {
-          assert.equal(await checkFileExists(filename), true)
-        })
-        .finally(async () => {
-          await rm(filename)
-          server.close()
-        })
+      onTestFinished(() => void server.close())
+      onTestFinished(() => rm(filename))
+
+      const response = await makeFetch(server)("/")
+      expect(response.status).toBe(404)
+      await expect(checkFileExists(filename)).resolves.toBe(true)
     })
     it("should read log file and check if logs are written", async () => {
       const filename = "./logs/test1/tiny.log"
@@ -139,20 +128,22 @@ describe("Logger tests", () => {
       )
 
       const server = app.listen()
-      await makeFetch(server)("/")
-        .expect(404)
-        .then(async () => {
-          assert.equal(await checkFileExists(filename), true)
-        })
-        .then(() => {
-          expect(readFileSync(filename).toString("utf-8").split("\n").slice(-2, -1)[0]).toMatch(
-            `[${level.toUpperCase()}] GET 404 Not Found /`,
-          )
-        })
-        .finally(async () => {
-          await rm(filename)
-          server.close()
-        })
+      onTestFinished(() => void server.close())
+      onTestFinished(() => rm(filename))
+
+      const response = await makeFetch(server)("/")
+      expect(response.status).toBe(404)
+      await expect(checkFileExists(filename)).resolves.toBe(true)
+
+      async function readLogFile() {
+        const fileBlob = await readFile(filename)
+        const fileContents = fileBlob.toString()
+        return fileContents.split("\n")
+      }
+      await expect(readLogFile()).resolves.toMatchObject([
+        `[${level.toUpperCase()}] GET 404 Not Found /`,
+        expect.any(String),
+      ])
     })
   })
 
@@ -175,27 +166,21 @@ describe("Logger tests", () => {
         app.get("/", (_, res) => res.status(status).send(""))
 
         const server = app.listen()
+        onTestFinished(() => void server.close())
 
-        await makeFetch(server)("/")
-          .expect(status)
-          .then(async () => await server.close())
+        const response = await makeFetch(server)("/")
+        expect(response.status).toBe(status)
       }
     }
 
-    it("should color 2xx cyan", () => {
-      createColorTest(200, "cyan")()
-    })
+    it("should color 2xx cyan", createColorTest(200, "cyan"))
 
-    it("should color 4xx red", () => {
-      createColorTest(400, "red")()
-    })
+    it("should color 4xx red", createColorTest(400, "red"))
 
-    it("should color 5xx magenta", () => {
-      createColorTest(500, "magenta")()
-    })
+    it("should color 5xx magenta", createColorTest(500, "magenta"))
   })
   describe("Badge Log", () => {
-    it("should display emoji", () => {
+    it("should display emoji", async () => {
       const app = new App()
 
       const customOutput = (log: string) => {
@@ -212,14 +197,12 @@ describe("Logger tests", () => {
       app.get("/", (_, res) => res.status(200).send(""))
 
       const server = app.listen()
+      onTestFinished(() => void server.close())
 
-      makeFetch(server)("/")
-        .expect(200)
-        .then(() => {
-          server.close()
-        })
+      const response = await makeFetch(server)("/")
+      expect(response.status).toBe(200)
     })
-    it("should not output anything if not passing badge config", () => {
+    it("should not output anything if not passing badge config", async () => {
       const app = new App()
       const customOutput = (log: string) => {
         expect(log).toMatch("GET 200 OK /")
@@ -230,14 +213,12 @@ describe("Logger tests", () => {
       app.get("/", (_, res) => res.status(200).send(""))
 
       const server = app.listen()
+      onTestFinished(() => void server.close())
 
-      makeFetch(server)("/")
-        .expect(200)
-        .then(() => {
-          server.close()
-        })
+      const response = await makeFetch(server)("/")
+      expect(response.status).toBe(200)
     })
-    it("should display both emoji and caption", () => {
+    it("should display both emoji and caption", async () => {
       const app = new App()
       const customOutput = (log: string) => {
         expect(log).toMatch("✅ GET 200 OK /")
@@ -253,47 +234,38 @@ describe("Logger tests", () => {
       app.get("/", (_, res) => res.status(200).send(""))
 
       const server = app.listen()
+      onTestFinished(() => void server.close())
 
-      makeFetch(server)("/")
-        .expect(200)
-        .then(() => {
-          server.close()
-        })
+      const response = await makeFetch(server)("/")
+      expect(response.status).toBe(200)
     })
+
     const createEmojiTest = (status: number, expected: string) => {
-      const app = new App()
-      const customOutput = (log: string) => {
-        expect(log.split(" ")[0]).toMatch(expected)
+      return async () => {
+        const app = new App()
+        const customOutput = (log: string) => {
+          expect(log.split(" ")[0]).toMatch(expected)
+        }
+
+        app.use(
+          logger({
+            emoji: true,
+            output: { callback: customOutput, color: false },
+          }),
+        )
+
+        app.get("/", (_, res) => res.status(status).send(""))
+
+        const server = app.listen()
+        onTestFinished(() => void server.close())
+
+        const response = await makeFetch(server)("/")
+        expect(response.status).toBe(status)
       }
-
-      app.use(
-        logger({
-          emoji: true,
-          output: { callback: customOutput, color: false },
-        }),
-      )
-
-      app.get("/", (_, res) => res.status(status).send(""))
-
-      const server = app.listen()
-
-      makeFetch(server)("/")
-        .expect(status)
-        .then(() => {
-          server.close()
-        })
     }
-    it("should output correct 2XX log", () => {
-      createEmojiTest(200, "✅")
-    })
-    it("should output correct 4XX log", () => {
-      createEmojiTest(400, "🚫")
-    })
-    it("should output correct 404 log", () => {
-      createEmojiTest(404, "❓")
-    })
-    it("should output correct 5XX log", () => {
-      createEmojiTest(500, "💣")
-    })
+    it("should output correct 2XX log", createEmojiTest(200, "✅"))
+    it("should output correct 4XX log", createEmojiTest(400, "🚫"))
+    it("should output correct 404 log", createEmojiTest(404, "❓"))
+    it("should output correct 5XX log", createEmojiTest(500, "💣"))
   })
 })

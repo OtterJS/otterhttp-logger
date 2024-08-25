@@ -1,5 +1,5 @@
-import { accessSync, writeFileSync, createWriteStream, WriteStream, mkdirSync } from 'node:fs'
-import { dirname as directoryname } from 'node:path'
+import { type WriteStream, accessSync, createWriteStream, mkdirSync, writeFileSync } from "node:fs"
+import { dirname as directoryname } from "node:path"
 
 export class FileLogger {
   readonly #filename: string
@@ -31,35 +31,35 @@ export class FileLogger {
         mkdirSync(this.#dirname, { recursive: true })
       }
       // create the file and write an empty string to it
-      writeFileSync(this.#filename, '')
+      writeFileSync(this.#filename, "")
       return
     }
   }
 
   #_createWritableStream() {
-    this.writableStream = createWriteStream(this.#filename, { flags: 'a' })
+    this.writableStream = createWriteStream(this.#filename, { flags: "a" })
   }
 
   toFile(stringToLog: string) {
-    this.writableStream.write(stringToLog + '\n')
+    this.writableStream.write(`${stringToLog}\n`)
   }
 
   #_endStream() {
-    process.on('exit', () => {
+    process.on("exit", () => {
       this.writableStream.close()
     })
 
-    process.on('SIGTERM', () => {
-      this.writableStream.close()
-      process.exit(0)
-    })
-
-    process.on('SIGINT', () => {
+    process.on("SIGTERM", () => {
       this.writableStream.close()
       process.exit(0)
     })
 
-    process.on('uncaughtException', () => {
+    process.on("SIGINT", () => {
+      this.writableStream.close()
+      process.exit(0)
+    })
+
+    process.on("uncaughtException", () => {
       this.writableStream.close()
       process.exit(1)
     })

@@ -1,15 +1,15 @@
-import { cyan, red, magenta, bold } from 'colorette'
-import statusEmoji from 'http-status-emojis'
-import dayjs from 'dayjs'
-import { METHODS, ServerResponse as Response, IncomingMessage as Request } from 'node:http'
-import { FileLogger } from './filelogger.js'
+import { METHODS, type IncomingMessage as Request, type ServerResponse as Response } from "node:http"
+import { bold, cyan, magenta, red } from "colorette"
+import dayjs from "dayjs"
+import statusEmoji from "http-status-emojis"
+import { FileLogger } from "./filelogger.js"
 
 export enum LogLevel {
-  error = 'error',
-  warn = 'warn',
-  trace = 'trace',
-  info = 'info',
-  log = 'log'
+  error = "error",
+  warn = "warn",
+  trace = "trace",
+  info = "info",
+  log = "log",
 }
 
 export interface LoggerOptions {
@@ -31,7 +31,7 @@ const compileArgs = (
   res: Response,
   options: LoggerOptions = {},
   status?: string,
-  msg?: string
+  msg?: string,
 ) => {
   const { method } = req
   const { statusCode } = res
@@ -39,14 +39,14 @@ const compileArgs = (
   const methods = options.methods ?? METHODS
   const timestamp = options.timestamp ?? false
   const emojiEnabled = options.emoji
-  const level = options.output && options.output.level ? options.output.level : null
-  if (level) args.push('[' + level.toUpperCase() + ']')
+  const level = options.output?.level ?? null
+  if (level) args.push(`[${level.toUpperCase()}]`)
 
   if (methods.includes(method) && timestamp) {
     args.push(
       `${dayjs()
-        .format(typeof timestamp !== 'boolean' && timestamp.format ? timestamp.format : 'HH:mm:ss')
-        .toString()} - `
+        .format(typeof timestamp !== "boolean" && timestamp.format ? timestamp.format : "HH:mm:ss")
+        .toString()} - `,
     )
   }
 
@@ -63,35 +63,39 @@ const compileArgs = (
 
 export const logger = (options: LoggerOptions = {}) => {
   const methods = options.methods ?? METHODS
-  const output = options.output ?? { callback: console.log, color: true, level: null }
+  const output = options.output ?? {
+    callback: console.log,
+    color: true,
+    level: null,
+  }
   let filelogger = null
-  if (options.output && options.output.filename) {
+  if (options.output?.filename) {
     filelogger = new FileLogger(options.output.filename)
   }
   return (req: Request, res: Response, next?: () => void) => {
-    res.on('finish', () => {
+    res.on("finish", () => {
       const args: (string | number)[] = []
       // every time
       if (methods.includes(req.method)) {
         const s = res.statusCode.toString()
-        let stringToLog = ''
+        let stringToLog = ""
         if (!output.color) {
           compileArgs(args, req, res, options)
-          const m = args.join(' ')
+          const m = args.join(" ")
           stringToLog = m
         } else {
           switch (s[0]) {
-            case '2':
+            case "2":
               compileArgs(args, req, res, options, cyan(bold(s)), cyan(res.statusMessage))
-              stringToLog = args.join(' ')
+              stringToLog = args.join(" ")
               break
-            case '4':
+            case "4":
               compileArgs(args, req, res, options, red(bold(s)), red(res.statusMessage))
-              stringToLog = args.join(' ')
+              stringToLog = args.join(" ")
               break
-            case '5':
+            case "5":
               compileArgs(args, req, res, options, magenta(bold(s)), magenta(res.statusMessage))
-              stringToLog = args.join(' ')
+              stringToLog = args.join(" ")
               break
           }
         }

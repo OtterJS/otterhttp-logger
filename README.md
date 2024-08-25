@@ -1,23 +1,21 @@
-<div align="center">
+# @otterhttp/logger
 
-# @tinyhttp/logger
-
-[![npm][npm-img]][npm-url] [![GitHub Workflow Status][gh-actions-img]][github-actions] [![Coverage][cov-img]][cov-url]
-
-</div>
+[![npm][npm-img]][npm-url]
+[![GitHub Workflow Status][gh-actions-img]][github-actions]
+[![Coverage][cov-img]][cov-url]
 
 Minimal and flexible HTTP logger
 
 ## Install
 
 ```sh
-pnpm i @tinyhttp/logger
+pnpm i @otterhttp/logger
 ```
 
 ## API
 
 ```ts
-import { logger } from '@tinyhttp/logger'
+import { logger } from '@otterhttp/logger'
 ```
 
 ### `logger(options)`
@@ -36,8 +34,8 @@ Returns the middleware for logging HTTP requests.
 ## Example
 
 ```ts
-import { App } from '@tinyhttp/app'
-import { logger } from '@tinyhttp/logger'
+import { App } from '@otterhttp/app'
+import { logger } from '@otterhttp/logger'
 
 new App()
   .use(
@@ -55,8 +53,8 @@ new App()
 To Log a level, use the enum `LogLevel`
 
 ```ts
-import { App } from '@tinyhttp/app'
-import { logger, LogLevel } from '@tinyhttp/logger'
+import { App } from '@otterhttp/app'
+import { logger, LogLevel } from '@otterhttp/logger'
 
 new App()
   .use(
@@ -74,8 +72,8 @@ This also includes a simple file logger. To stream to a file, simply supply the 
 `./file.log` or `./log/tiny.log`
 
 ```ts
-import { App } from '@tinyhttp/app'
-import { logger } from '@tinyhttp/logger'
+import { App } from '@otterhttp/app'
+import { logger } from '@otterhttp/logger'
 
 new App()
   .use(
@@ -92,11 +90,11 @@ new App()
 ## Alternatives
 
 - [Pino HTTP](https://github.com/pinojs/pino-http) - high-speed HTTP logger for Node.js
-- [chrona](https://github.com/xambassador/chrona) - Simple HTTP request logger middleware for express.js inspired from koa-logger, written in typescript.
+- [chrona](https://github.com/xambassador/chrona) - Simple HTTP request logger middleware for express.js inspired from koa-logger, written in typescript
 
-[npm-url]: https://npmjs.com/package/@tinyhttp/logger
-[github-actions]: https://github.com/tinyhttp/logger/actions
-[gh-actions-img]: https://img.shields.io/github/actions/workflow/status/tinyhttp/logger/ci.yml?branch=master&style=for-the-badge&color=hotpink&label=&logo=github
-[cov-img]: https://img.shields.io/coveralls/github/tinyhttp/logger?style=for-the-badge&color=hotpink
-[cov-url]: https://coveralls.io/github/tinyhttp/logger
-[npm-img]: https://img.shields.io/npm/dt/@tinyhttp/logger?style=for-the-badge&color=hotpink
+[npm-url]: https://npmjs.com/package/@otterhttp/logger
+[npm-img]: https://img.shields.io/npm/dt/@otterhttp/logger?style=for-the-badge&color=blueviolet
+[github-actions]: https://github.com/OtterJS/otterhttp-logger/actions
+[gh-actions-img]: https://img.shields.io/github/actions/workflow/status/OtterJS/otterhttp-logger/ci.yml?branch=main&style=for-the-badge&color=blueviolet&label=&logo=github
+[cov-url]: https://coveralls.io/github/OtterJS/otterhttp-logger
+[cov-img]: https://img.shields.io/coveralls/github/OtterJS/otterhttp-logger?style=for-the-badge&color=blueviolet

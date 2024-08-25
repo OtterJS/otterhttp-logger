@@ -95,6 +95,6 @@ new App()
 [npm-url]: https://npmjs.com/package/@otterhttp/logger
 [npm-img]: https://img.shields.io/npm/dt/@otterhttp/logger?style=for-the-badge&color=blueviolet
 [github-actions]: https://github.com/OtterJS/otterhttp-logger/actions
-[gh-actions-img]: https://img.shields.io/github/actions/workflow/status/OtterJS/otterhttp-logger/ci.yml?branch=main&style=for-the-badge&color=blueviolet&label=&logo=github
+[gh-actions-img]: https://img.shields.io/github/actions/workflow/status/OtterJS/otterhttp-logger/main.yml?branch=main&style=for-the-badge&color=blueviolet&label=&logo=github
 [cov-url]: https://coveralls.io/github/OtterJS/otterhttp-logger
 [cov-img]: https://img.shields.io/coveralls/github/OtterJS/otterhttp-logger?style=for-the-badge&color=blueviolet

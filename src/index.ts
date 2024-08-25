@@ -1,8 +1,9 @@
 import { METHODS, type IncomingMessage as Request, type ServerResponse as Response } from "node:http"
 import { bold, cyan, magenta, red } from "colorette"
 import dayjs from "dayjs"
-import statusEmoji from "http-status-emojis"
+
 import { FileLogger } from "./filelogger.js"
+import { httpStatusEmoji } from "./http-status-emoji"
 
 export enum LogLevel {
   error = "error",
@@ -52,7 +53,7 @@ const compileArgs = (
 
   if (options.ip) args.push(req.ip)
 
-  if (emojiEnabled) args.push(statusEmoji[statusCode])
+  if (emojiEnabled) args.push(httpStatusEmoji[statusCode])
 
   args.push(method)
 

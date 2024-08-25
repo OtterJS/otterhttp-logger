@@ -28,7 +28,7 @@ export interface LoggerOptions {
 
 const compileArgs = (
   args: (string | number)[],
-  req: Request & Partial<{ originalUrl: string; ip: string }>,
+  req: Request & { ip?: string | undefined },
   res: Response,
   options: LoggerOptions = {},
   status?: string,
@@ -36,7 +36,7 @@ const compileArgs = (
 ) => {
   const { method } = req
   const { statusCode } = res
-  const url = req.originalUrl || req.url
+  const url = req.url
   const methods = options.methods ?? METHODS
   const timestamp = options.timestamp ?? false
   const emojiEnabled = options.emoji

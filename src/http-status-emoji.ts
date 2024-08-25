@@ -1,3 +1,15 @@
+/**
+ * @license LGPL-3.0-or-later
+ *
+ * The contents of this file are significantly based upon [http-status-emojis/index.js]{@link
+ * https://github.com/bendrucker/http-status-emojis/blob/0d02dab315fac1a4fae09c024ed674444edb85fa/index.js}
+ *
+ * `Copyright (c) 2019 Ben Drucker <bvdrucker@gmail.com> (bendrucker.me)`
+ *
+ * Ben Drucker licenses the referenced file to Lordfirespeed under the terms of the MIT license.
+ */
+
+/** */
 export const httpStatusEmoji = {
   100: "🏁",
   200: "✅",
